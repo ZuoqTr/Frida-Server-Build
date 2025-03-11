@@ -54,11 +54,20 @@ jobs:
         cd frida/subprojects/frida-core
         git am ../../../Patchs/strongR-frida/frida-core/*.patch
 
+        
+    - name: two step patch   
+      shell: bash
+      run: |
+        cd frida/subprojects/frida-gum/gum
+        git am ../../../../Patchs/strongR-frida/frida-gum/*.patch
+        cd ../../../
+
+
     - name: Build Frida for Android
       shell: bash
       run: |
         cd frida
-        ./configure --host=android-arm64
+        ./configure --host=android-arm64 --enable-portal -- -Dfrida-gum:devkits=gum,gumjs -Dfrida-core:devkits=core
         make
         mv build/subprojects/frida-core/server/frida-server arm64-v8a
 
