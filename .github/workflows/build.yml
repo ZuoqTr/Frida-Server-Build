@@ -50,6 +50,7 @@ jobs:
         git clone -b ${{ github.event.inputs.FRIDA_VERSION }} --recurse-submodules https://github.com/frida/frida frida
         cd frida/subprojects/frida-core
         git am ../../../Patchs/frida-core/*.patch
+        git am --show-current-patch=diff
 
     - name: Build Frida for Android
       env:
