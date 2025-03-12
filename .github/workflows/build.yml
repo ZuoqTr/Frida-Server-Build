@@ -9,33 +9,33 @@ on:
 
 jobs:
   android_build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-    - name: Set Up Node.js
-      uses: actions/setup-node@v4
+    - uses: actions/setup-node@v3
       with:
         node-version: 18
 
-    - name: Set Up Java
-      uses: actions/setup-java@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
       with:
-        distribution: 'temurin'
-        java-version: 21
+        distribution: "temurin"
+        java-version: "17"
 
-    - name: Set Up NDK
-      uses: nttld/setup-ndk@v1
+    - name: Setup Android NDK
       id: setup-ndk
+      uses: nttld/setup-ndk@v1
       with:
         ndk-version: r25c
-    
-    - name: Set Up Python
-      uses: actions/setup-python@v5
+        local-cache: false
+        link-to-sdk: true
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: 3.11
 
     - name: Install Dependencies
       run: |
@@ -49,9 +49,18 @@ jobs:
         git config --global user.name "Your Name"
         git clone https://github.com/ZuoqTr/Frida-Patchs Patchs
         git clone -b ${{ github.event.inputs.FRIDA_VERSION }} --recurse-submodules https://github.com/frida/frida frida
-        cd frida/subprojects/frida-core
-        git am ../../../Patchs/frida-core/*.patch
-        git am --show-current-patch=diff
+        cd frida
+        for path in ../patches/*
+        do
+          name=$(basename $path)
+          real=$(realpath $path)
+          echo "Apply patches in $real to frida/subprojects/$name"
+          cd subprojects/$name
+          git am ../../../patches/$name/*.patch
+          cd ../..
+          echo $i
+        done
+        cd ..
 
     - name: Build Frida for Android
       env:
