@@ -47,7 +47,7 @@ jobs:
       run: |
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
-        git clone https://github.com/ZuoqTr/Frida-Patchs Patchs
+        git clone https://github.com/ZuoqTr/Frida-Patchs patches
         git clone -b ${{ github.event.inputs.FRIDA_VERSION }} --recurse-submodules https://github.com/frida/frida frida
         cd frida
         for path in ../patches/*
